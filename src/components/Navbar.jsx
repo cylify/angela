@@ -11,7 +11,7 @@ function Navbar() {
 
       <div className="flex gap-4">
         <Link to="/wishlist" className="text-pink-600 hover:text-pink-800 font-medium no-underline !text-pink-600">Wishlist</Link>
-        <Link to="/pictures" className="text-pink-600 hover:text-pink-800 font-medium no-underline !text-pink-600">Pictures</Link>
+        <Link to="/pictures" className="text-pink-600 hover:text-pink-800 font-medium no-underline !text-pink-600">Our Gallery</Link>
         <Link to="/spotify" className="text-pink-600 hover:text-pink-800 font-medium no-underline !text-pink-600">Spotify</Link>
         <Link to="/todo" className="text-pink-600 hover:text-pink-800 font-medium no-underline !text-pink-600">To-do</Link>
         <Link to="/yap" className="text-pink-600 hover:text-pink-800 font-medium no-underline !text-pink-600">Yap</Link>
