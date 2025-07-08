@@ -35,7 +35,7 @@ function Letter() {
           <p>
             Since then, it’s been a journey of extremes. I’ve felt happiness I never thought I could feel. You’ve been the highlight of every single one of my days. Every chance I got to hear your voice, to talk to you, felt like a blessing. In those moments, I felt peace. I felt like life made sense. Like I had someone to build a life with, to share my world with, to grow together, learn together, be together, until death do us part.
           </p>
-
+          {/*
           <p>
             But I’ve also felt pain I can’t describe. Like my heart was being crushed and pierced with thorns. And it wasn’t loving you that caused pain, it was feeling like I wasn’t loving you the right way. Because I made you cry. Because I made you feel judged, guilty, or unworthy. That guilt eats at me, Angela. Every single day, when you’re sleeping, when it’s early morning, when I’m sitting alone on the train to work, or when I smoke late at night because I don’t know what else to do. I keep wondering if I will ever forgive myself for making you feel that way. I don’t think I will. I don’t think I deserve to. You may have forgiven me and moved on, but I can’t forgive myself.
           </p>
@@ -55,7 +55,11 @@ function Letter() {
           <p>
             I know this is pretty depressing so far, but I want to stop smoking. I need to find myself again. I want us to be happy together, to be sad together, to feel together. I want us to be together forever.
           </p>
-
+          */}
+          <p>
+            [redacted]
+          </p>
+          
           <p>
             I am so grateful I joined that listen along of yours, that I added you on Discord even though I never add people. I’m so happy I have the opportunity to know you, to love you, to be together with you. I’ve said it before, but I’ll say it again, I want to be your husband. I want to be the person you call your husband, the father of our children. I want to spend the rest of my life with you.
           </p>
