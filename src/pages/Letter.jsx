@@ -1,6 +1,9 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 function Letter() {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-pink-100 to-pink-200 p-16 flex justify-center items-center font-serif">
       <div className="bg-white bg-opacity-80 p-6 rounded shadow max-w-2xl w-full">
@@ -85,6 +88,14 @@ function Letter() {
             With all my love,<br />
             Adi
           </p>
+        </div>
+        <div className="flex justify-center mt-8">
+          <button
+            onClick={() => navigate("/jaan")}
+            className="text-pink-500 hover:text-pink-300 text-2xl animate-bounce mb-25"
+          >
+            ↑
+          </button>
         </div>
       </div>
     </div>

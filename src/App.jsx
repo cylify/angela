@@ -6,6 +6,7 @@ import Navbar from "./components/Navbar";
 import MusicPopup from "./components/MusicPopup";
 import Footer from "./components/Footer";
 
+import Jaan from "./pages/Jaan";
 import Home from "./pages/Home";
 import Wishlist from "./pages/Wishlist";
 import Socials from "./pages/Socials";
@@ -41,6 +42,7 @@ function AnimatedRoutes() {
         <Route path="/todo" element={<PageWrapper><Todo /></PageWrapper>} />
         <Route path="/yap" element={<PageWrapper><Yap /></PageWrapper>} />
         <Route path="/letter" element={<PageWrapper><Letter /></PageWrapper>} />
+        <Route path="/jaan" element={<PageWrapper><Jaan /></PageWrapper>} />
         <Route path="/login" element={<PageWrapper><Login /></PageWrapper>} />
         <Route path="/register" element={<PageWrapper><Register /></PageWrapper>} />
       </Routes>

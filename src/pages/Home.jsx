@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import Footer from "../components/Footer"; // adjust path if needed
+import Footer from "../components/Footer";
 
 function Home() {
   const navigate = useNavigate();
@@ -50,7 +50,6 @@ function Home() {
         ↑
       </button>
 
-      {/* Roses Footer only here */}
       <Footer />
 
       {/* Keyframes */}
