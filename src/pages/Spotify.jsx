@@ -17,6 +17,16 @@ function Spotify() {
       embedUrl: "https://open.spotify.com/embed/playlist/3bQgj2ypbt6kzZW8mM3eRV",
       link: "https://open.spotify.com/playlist/3bQgj2ypbt6kzZW8mM3eRV",
     },
+    {
+      title: "blend",
+      embedurl: "https://open.spotify.com/embed/playlist/37i9dQZF1EJI1cOhCN62uu",
+      link: "https://open.spotify.com/playlist/37i9dQZF1EJI1cOhCN62uu",
+    },
+    {
+      title: "akl.luvr",
+      embedurl: "https://open.spotify.com/embed/playlist/0aoS7MfiLVV0RmNVlrDjkR",
+      link: "https://open.spotify.com/playlist/0aoS7MfiLVV0RmNVlrDjkR",
+    },
   ];
 
   return (
