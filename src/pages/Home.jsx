@@ -38,7 +38,7 @@ function Home() {
           My Dearest Angela
         </h1>
         <p className="text-pink-600 text-lg sm:text-xl max-w-xl mx-auto">
-          You are my beautiful rose, my forever garden of love. May this always remind you of how cherished you are every day.
+          You are my beautiful rose, my forever garden of love. My wife to be. May this always remind you of how cherished you are every day.
         </p>
       </div>
 
