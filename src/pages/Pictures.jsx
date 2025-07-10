@@ -31,16 +31,6 @@ function Pictures() {
       return;
     }
 
-    if (file.size > 10 * 1024 * 1024) { // 10MB limit
-      alert("File size must be less than 10MB. Please compress your image or use a smaller file.");
-      return;
-    }
-
-    if (!file.type.startsWith('image/')) {
-      alert("Please select a valid image file");
-      return;
-    }
-
     setUploading(true);
     try {
       console.log("Uploading file:", file);
@@ -48,16 +38,13 @@ function Pictures() {
       const uniqueFileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
       const storageRef = ref(storage, `pictures/${uniqueFileName}`);
 
-      // Upload raw file (no dataURL conversion needed)
-      console.log("Starting upload to storage...");
+      // Upload using uploadBytes directly for files
       await uploadBytes(storageRef, file);
       console.log("File uploaded successfully to storage");
 
       const url = await getDownloadURL(storageRef);
       console.log("Download URL obtained:", url);
 
-      // Save to Firestore
-      console.log("Saving to Firestore...");
       await addDoc(picturesCollectionRef, {
         url,
         caption,
@@ -65,34 +52,22 @@ function Pictures() {
         storagePath: `pictures/${uniqueFileName}`,
         createdAt: serverTimestamp(),
       });
-      console.log("Successfully saved to Firestore");
 
-      // Reset form
       setFile(null);
       setFileName("");
       setCaption("");
       setUploader("");
       setShowForm(false);
 
-      console.log("Picture uploaded and saved successfully!");
       alert("Upload successful!");
     } catch (error) {
       console.error("Upload error:", error);
-      const msg = error.message || "";
-
-      if (error.code === 'storage/quota-exceeded') {
-        alert("Storage quota exceeded. Please try again later.");
-      } else if (error.code === 'storage/unauthenticated') {
-        alert("Authentication error. Please refresh the page and try again.");
-      } else if (msg.includes('network')) {
-        alert("Network error. Please check your connection and try again.");
-      } else {
-        alert(`Upload failed: ${msg || 'Unknown error'}`);
-      }
+      alert(`Upload failed: ${error.message}`);
     } finally {
       setUploading(false);
     }
   };
+
 
   const deletePicture = async (pic) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this picture?");
