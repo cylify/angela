@@ -62,7 +62,7 @@ function Pictures() {
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-pink-100 to-pink-200 p-4 font-sans">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-3xl font-bold text-pink-600">Our Personal VSCO</h2>
+        <h2 className="text-3xl font-bold text-pink-600">Hidden Memories</h2>
         <button
           onClick={() => setShowForm(!showForm)}
           className="bg-pink-400 hover:bg-pink-500 text-white font-medium px-3 py-1 rounded text-sm"
