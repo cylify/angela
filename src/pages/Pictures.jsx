@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { db, storage } from "../firebase";
 import { collection, addDoc, onSnapshot, deleteDoc, doc, serverTimestamp } from "firebase/firestore";
-import { ref, uploadString, getDownloadURL, deleteObject } from "firebase/storage";
+import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 
 function Pictures() {
   const [pictures, setPictures] = useState([]);
@@ -24,16 +24,6 @@ function Pictures() {
     return () => unsubscribe();
   }, []);
 
-  // Convert file to base64 data URL (same method as drawings)
-  const fileToDataURL = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = (e) => resolve(e.target.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  };
-
   const uploadPicture = async (e) => {
     e.preventDefault();
     if (!file || !uploader) {
@@ -41,13 +31,11 @@ function Pictures() {
       return;
     }
 
-    // Check file size (limit to 2MB for uploadString)
-    if (file.size > 2 * 1024 * 1024) {
-      alert("File size must be less than 2MB. Please compress your image or use a smaller file.");
+    if (file.size > 10 * 1024 * 1024) { // 10MB limit
+      alert("File size must be less than 10MB. Please compress your image or use a smaller file.");
       return;
     }
 
-    // Check file type
     if (!file.type.startsWith('image/')) {
       alert("Please select a valid image file");
       return;
@@ -56,21 +44,15 @@ function Pictures() {
     setUploading(true);
     try {
       console.log("Uploading file:", file);
-      
-      // Convert file to data URL (same as drawings component)
-      const dataUrl = await fileToDataURL(file);
-      console.log("Data URL created successfully");
-      
-      // Create storage reference with timestamp first (like drawings)
+
       const uniqueFileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
       const storageRef = ref(storage, `pictures/${uniqueFileName}`);
-      
-      // Upload using uploadString with data_url (same as drawings component)
+
+      // Upload raw file (no dataURL conversion needed)
       console.log("Starting upload to storage...");
-      await uploadString(storageRef, dataUrl, "data_url");
+      await uploadBytes(storageRef, file);
       console.log("File uploaded successfully to storage");
-      
-      // Get download URL
+
       const url = await getDownloadURL(storageRef);
       console.log("Download URL obtained:", url);
 
@@ -91,22 +73,21 @@ function Pictures() {
       setCaption("");
       setUploader("");
       setShowForm(false);
-      
+
       console.log("Picture uploaded and saved successfully!");
       alert("Upload successful!");
     } catch (error) {
       console.error("Upload error:", error);
-      console.error("Error details:", error.code, error.message);
-      
-      // More specific error messages
+      const msg = error.message || "";
+
       if (error.code === 'storage/quota-exceeded') {
         alert("Storage quota exceeded. Please try again later.");
       } else if (error.code === 'storage/unauthenticated') {
         alert("Authentication error. Please refresh the page and try again.");
-      } else if (error.message.includes('network')) {
+      } else if (msg.includes('network')) {
         alert("Network error. Please check your connection and try again.");
       } else {
-        alert(`Upload failed: ${error.message}`);
+        alert(`Upload failed: ${msg || 'Unknown error'}`);
       }
     } finally {
       setUploading(false);
@@ -118,16 +99,14 @@ function Pictures() {
     if (!confirmDelete) return;
 
     try {
-      // Delete from storage
       if (pic.storagePath) {
         const fileRef = ref(storage, pic.storagePath);
         await deleteObject(fileRef);
       }
 
-      // Delete from Firestore
       const picDoc = doc(db, "pictures", pic.id);
       await deleteDoc(picDoc);
-      
+
       setMenuOpenId(null);
     } catch (error) {
       console.error("Delete error:", error);
@@ -167,8 +146,8 @@ function Pictures() {
                   onChange={(e) => {
                     const selectedFile = e.target.files[0];
                     if (selectedFile) {
-                      if (selectedFile.size > 2 * 1024 * 1024) {
-                        alert("File size must be less than 2MB");
+                      if (selectedFile.size > 10 * 1024 * 1024) {
+                        alert("File size must be less than 10MB");
                         e.target.value = "";
                         return;
                       }
@@ -182,7 +161,7 @@ function Pictures() {
                   htmlFor="file-upload"
                   className="cursor-pointer inline-block w-full bg-pink-400 hover:bg-pink-500 text-white font-semibold text-center px-4 py-2 rounded"
                 >
-                  {fileName || "Choose Image (Max 2MB)"}
+                  {fileName || "Choose Image (Max 10MB)"}
                 </label>
               </div>
               <input

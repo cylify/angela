@@ -4,7 +4,6 @@ import { AnimatePresence, motion } from "framer-motion";
 
 import Navbar from "./components/Navbar";
 import MusicPopup from "./components/MusicPopup";
-import Footer from "./components/Footer";
 
 import Jaan from "./pages/Jaan";
 import Home from "./pages/Home";
