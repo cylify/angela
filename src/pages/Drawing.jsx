@@ -1,9 +1,8 @@
 import React, { useRef, useState, useEffect } from "react";
 import { ReactSketchCanvas } from "react-sketch-canvas";
 import { storage, db } from "../firebase";
-import { ref, uploadString, getDownloadURL } from "firebase/storage";
-import { collection, addDoc, onSnapshot, serverTimestamp } from "firebase/firestore";
-import { deleteDoc, doc } from "firebase/firestore";
+import { ref, uploadString, getDownloadURL, deleteObject } from "firebase/storage";
+import { collection, addDoc, onSnapshot, serverTimestamp, deleteDoc, doc } from "firebase/firestore";
 
 function Drawing() {
   const canvasRef = useRef(null);
@@ -31,12 +30,16 @@ function Drawing() {
     const canvas = canvasRef.current;
     const dataUrl = await canvas.exportImage("png");
 
-    const storageRef = ref(storage, `drawings/${Date.now()}.png`);
+    const filename = `${Date.now()}.png`;
+    const storagePath = `drawings/${filename}`;
+    const storageRef = ref(storage, storagePath);
+
     await uploadString(storageRef, dataUrl, "data_url");
     const url = await getDownloadURL(storageRef);
 
     await addDoc(drawingsCollectionRef, {
       url,
+      storagePath, // Save storage path for deletion
       title,
       createdAt: serverTimestamp(),
     });
@@ -55,12 +58,25 @@ function Drawing() {
     link.click();
   };
 
-  const deleteDrawing = async (id) => {
+  const deleteDrawing = async (id, storagePath) => {
     const confirmDelete = window.confirm("Delete this drawing?");
     if (!confirmDelete) return;
 
-    const docRef = doc(db, "drawings", id);
-    await deleteDoc(docRef);
+    try {
+      // Delete from storage
+      if (storagePath) {
+        const fileRef = ref(storage, storagePath);
+        await deleteObject(fileRef);
+      }
+
+      // Delete from Firestore
+      const docRef = doc(db, "drawings", id);
+      await deleteDoc(docRef);
+
+    } catch (error) {
+      console.error("Delete error:", error);
+      alert(`Delete failed: ${error.message}`);
+    }
   };
 
   const applyCanvasSize = () => {
@@ -167,7 +183,7 @@ function Drawing() {
         {drawings.map((draw) => (
           <div key={draw.id} className="bg-white p-2 rounded shadow flex flex-col items-center relative">
             <button
-              onClick={() => deleteDrawing(draw.id)}
+              onClick={() => deleteDrawing(draw.id, draw.storagePath)}
               className="absolute top-2 right-2 text-pink-400 hover:text-pink-600 text-xl"
             >
               ⋮
