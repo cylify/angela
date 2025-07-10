@@ -1,0 +1,123 @@
+import React, { useRef, useState, useEffect } from "react";
+import CanvasDraw from "react-canvas-draw";
+import { storage, db } from "../firebase";
+import { ref, uploadString, getDownloadURL } from "firebase/storage";
+import { collection, addDoc, onSnapshot, serverTimestamp } from "firebase/firestore";
+import { deleteDoc, doc } from "firebase/firestore";
+
+function Drawing() {
+  const canvasRef = useRef(null);
+  const [drawings, setDrawings] = useState([]);
+  const [brushColor, setBrushColor] = useState("#d63384");
+  const [title, setTitle] = useState("");
+
+  const drawingsCollectionRef = collection(db, "drawings");
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(drawingsCollectionRef, (snapshot) => {
+      const data = snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+      setDrawings(data);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const saveDrawing = async () => {
+    const canvas = canvasRef.current;
+    const drawingCanvas = canvas.canvasContainer.children[1];
+    const dataUrl = drawingCanvas.toDataURL("image/png");
+
+    // Upload to Firebase Storage
+    const storageRef = ref(storage, `drawings/${Date.now()}.png`);
+    await uploadString(storageRef, dataUrl, "data_url");
+    const url = await getDownloadURL(storageRef);
+
+    // Save metadata to Firestore
+    await addDoc(drawingsCollectionRef, {
+      url,
+      title,
+      createdAt: serverTimestamp(),
+    });
+
+    canvas.clear();
+    setTitle("");
+  };
+
+  const downloadDrawing = () => {
+    const canvas = canvasRef.current;
+    const dataUrl = canvas.getDataURL("image/png");
+
+    const link = document.createElement("a");
+    link.download = `drawing_${Date.now()}.png`;
+    link.href = dataUrl;
+    link.click();
+  };
+
+  const deleteDrawing = async (id) => {
+    const confirmDelete = window.confirm("Delete this drawing?");
+    if(!confirmDelete) return;
+
+    const docRef = doc(db, "drawings", id);
+    await deleteDoc(docRef);
+  };
+
+  return (
+    <div className="min-h-screen w-full bg-gradient-to-b from-pink-100 to-pink-200 p-8 flex flex-col items-center font-serif">
+      <h2 className="text-3xl font-bold text-pink-600 mb-4">Drawing Pad</h2>
+      <p className="mb-8">DOODLING!!</p>
+      
+      <div className="bg-white p-4 rounded shadow mb-6">
+        <CanvasDraw
+          ref={canvasRef}
+          canvasWidth={600}
+          canvasHeight={400}
+          brushColor={brushColor}
+          lazyRadius={0}
+          brushRadius={2}
+          hideGrid
+        />
+
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-3 gap-2">
+          <input
+            type="text"
+            placeholder="Title / Note"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="border border-pink-300 rounded px-3 py-2 w-full sm:w-auto"
+          />
+
+          <input
+            type="color"
+            value={brushColor}
+            onChange={(e) => setBrushColor(e.target.value)}
+            className="w-10 h-10 p-0 border-none cursor-pointer"
+          />
+        </div>
+
+        <div className="flex flex-wrap justify-between mt-3 gap-2">
+          <button onClick={() => canvasRef.current.clear()} className="bg-pink-400 hover:bg-pink-500 text-white px-3 py-1 rounded">Clear</button>
+          <button onClick={() => canvasRef.current.undo()} className="bg-pink-400 hover:bg-pink-500 text-white px-3 py-1 rounded">Undo</button>
+          <button onClick={downloadDrawing} className="bg-pink-500 hover:bg-pink-600 text-white px-3 py-1 rounded">Download</button>
+          <button onClick={saveDrawing} className="bg-pink-600 hover:bg-pink-700 text-white px-3 py-1 rounded">Save</button>
+        </div>
+      </div>
+
+      <h3 className="text-2xl font-bold text-pink-500 mb-4">Saved Drawings</h3>
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        {drawings.map((draw) => (
+          <div key={draw.id} className="bg-white p-2 rounded shadow flex flex-col items-center relative">
+            <button
+              onClick={() => deleteDrawing(draw.id)}
+              className="absolute top-2 right-2 text-pink-400 hover:text-pink-600 text-xl"
+            >
+              ⋮
+            </button>
+            <img src={draw.url} alt="drawing" className="w-48 h-48 object-contain" />
+            <p className="text-sm text-pink-600 mt-2">{draw.title}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default Drawing;

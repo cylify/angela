@@ -15,6 +15,7 @@ function Navbar() {
         <Link to="/spotify" className="text-pink-600 hover:text-pink-800 font-medium no-underline !text-pink-600">Spotify</Link>
         <Link to="/todo" className="text-pink-600 hover:text-pink-800 font-medium no-underline !text-pink-600">To-do</Link>
         <Link to="/yap" className="text-pink-600 hover:text-pink-800 font-medium no-underline !text-pink-600">Yap</Link>
+        <Link to="/drawing" className="text-pink-600 hover:text-pink-800 font-medium no-underline !text-pink-600">Draw</Link>
         <Link to="/socials" className="text-pink-600 hover:text-pink-800 font-medium no-underline !text-pink-600">Socials</Link>
       </div>
     </nav>

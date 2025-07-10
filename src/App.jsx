@@ -17,6 +17,8 @@ import Yap from "./pages/Yap";
 import Letter from "./pages/Letter";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Drawing from "./pages/Drawing";
+
 
 function App() {
   return (
@@ -45,6 +47,7 @@ function AnimatedRoutes() {
         <Route path="/jaan" element={<PageWrapper><Jaan /></PageWrapper>} />
         <Route path="/login" element={<PageWrapper><Login /></PageWrapper>} />
         <Route path="/register" element={<PageWrapper><Register /></PageWrapper>} />
+        <Route path="/drawing" element={<PageWrapper><Drawing /></PageWrapper>} />
       </Routes>
     </AnimatePresence>
   );
